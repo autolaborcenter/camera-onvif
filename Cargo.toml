@@ -1,0 +1,11 @@
+[package]
+name = "camera-onvif"
+version = "0.1.0"
+edition = "2021"
+authors = ["YdrMaster <ydrml@hotmail.com>"]
+readme = "README.md"
+
+[dependencies]
+base64 = "*"
+sha1 = "*"
+chrono = "*"
