@@ -1,8 +1,18 @@
-use std::{io::Write, net::TcpStream};
+use std::net::IpAddr;
 
-fn main() {
-    let body = build_ptz(0, (0.0, 1.0, 0.0));
-    let http = format!(
+pub fn build_gstreamer(address: IpAddr, stream: u8) -> String {
+    format!(
+        "\
+rtspsrc location=rtsp://admin:admin@192.168.188.88:554/{} \
+! application/x-rtp,media=video \
+! udpsink host={} port=5006 sync=false",
+        stream, address
+    )
+}
+
+pub fn build_ptz(ptz: (f32, f32, f32)) -> String {
+    let body = build_ptz_body(0, ptz);
+    format!(
         "\
 GET / HTTP/1.1\r\n\
 soapUri:http://192.168.1.88:8080/onvif/ptz_service\r\n\
@@ -13,16 +23,10 @@ Content-Length:{}\r\n\
 {}",
         body.len(),
         body
-    );
-
-    println!("http = \n{}", http);
-
-    let mut tcp = TcpStream::connect("192.168.1.88:8080").unwrap();
-    println!("connected!");
-    tcp.write_all(http.as_bytes()).unwrap();
+    )
 }
 
-fn build_ptz(nonce: i32, ptz: (f32, f32, f32)) -> String {
+fn build_ptz_body(nonce: i32, ptz: (f32, f32, f32)) -> String {
     let time_stamp = get_utc();
     let nonce = nonce.to_string();
     let user_name = "admin";
