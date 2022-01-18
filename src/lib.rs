@@ -63,7 +63,7 @@ fn build_onvif_xml(nonce: i32, body: &str) -> String {
     let time_stamp = get_utc();
     let nonce = nonce.to_string();
     let user_name = "admin";
-    let password = sha1::Sha1::from(format!("{}{}{}", nonce, time_stamp, "admin"))
+    let password = sha1_smol::Sha1::from(format!("{nonce}{time_stamp}admin"))
         .digest()
         .to_string();
 
